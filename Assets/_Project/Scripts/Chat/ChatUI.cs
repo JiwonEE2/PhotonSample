@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,7 +11,7 @@ public class ChatUI : MonoBehaviour
 	public RectTransform messageContent;
 	public GameObject messageEntryPrefab;
 
-	public string myNickname = "¹«¸íÀÇ Àü»ç";
+	public string myNickname = "ë¬´ëª…ì˜ ì „ì‚¬";
 
 	private void Awake()
 	{
@@ -19,13 +19,13 @@ public class ChatUI : MonoBehaviour
 		sendButton.onClick.AddListener(SendChatMessage);
 	}
 	
-	//¸Ş½ÃÁö¸¦ º¸³¾¶§ È£Ãâ
+	//ë©”ì‹œì§€ë¥¼ ë³´ë‚¼ë•Œ í˜¸ì¶œ
 	public void SendChatMessage()
 	{
 		messageInput.text = "";
 	}
 
-	//¸Ş½ÃÁö¸¦ ¹ŞÀ»¶§ È£Ãâ
+	//ë©”ì‹œì§€ë¥¼ ë°›ì„ë•Œ í˜¸ì¶œ
 	public void ReceiveChatMessage(string nickname, string message)
 	{
 		var entry = Instantiate(messageEntryPrefab, messageContent);
