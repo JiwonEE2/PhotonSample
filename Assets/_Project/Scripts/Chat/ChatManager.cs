@@ -21,6 +21,10 @@ public class ChatManager : MonoBehaviour, IChatClientListener
 
 	private ChatClient client;
 
+	public ChatState state = 0;
+
+	public string currentChannel;
+
 	private void Awake()
 	{
 		Instance = this;
@@ -44,20 +48,74 @@ public class ChatManager : MonoBehaviour, IChatClientListener
 		client.AuthValues = new ChatAuthValues(nickname);
 	}
 
+	// PhotonServerSettings를 사용하여 접속할 경우
 	public void ConnectUsingSettings()
 	{
 		AppSettings appSettings = PhotonNetwork.PhotonServerSettings.AppSettings;
 		// ChatAppSettings chatSettings = new ChatAppSettings
 		// {
 		// 	AppIdChat = AppSettings.AppIdChat
+		//	...
 		// };
 		// 위처럼 안해도 이렇게 할 수 있는 확장 메서드가 있다.
 		ChatAppSettings chatSettings = appSettings.GetChatSettings();
 		client.ConnectUsingSettings(chatSettings);
 	}
 
+	// 기본적으로 AppId를 통해 접속할 경우
 	public void ConnectUsingAppId()
 	{
+		string chatId = "2d87970a-3d37-47c0-8b8b-0c5d335ed577";
+		client.Connect(chatId, "1.0", client.AuthValues);
+	}
+
+	// 특정 채팅방(채팅 채널)에서 채팅 시작
+	public void ChatStart(string roomName)
+	{
+		client.Subscribe(new string[] { roomName });
+	}
+
+	// 채팅 메시지 전송
+	public void SendChatMessage(string message)
+	{
+		client.PublishMessage(currentChannel, message);
+	}
+
+	public void OnChatStateChange(ChatState state)
+	{
+		if (this.state != state)
+		{
+			print($"Chat state changed: {state}");
+			this.state = state;
+		}
+	}
+
+	public void OnSubscribed(string[] channels, bool[] results)
+	{
+		currentChannel = channels[0];
+		joinUI.gameObject.SetActive(false);
+		chatUI.gameObject.SetActive(true);
+		chatUI.roomNameLabel.text = channels[0];
+		print($"채팅방 접속: {channels[0]}");
+	}
+
+	public void OnConnected()
+	{
+		joinUI.OnJoinedServer();
+	}
+
+	public void OnGetMessages(string channelName, string[] senders, object[] messages)
+	{
+		if (channelName != currentChannel)
+		{
+			print($"다른 채널의 메시지 수신함: {channelName}");
+			return;
+		}
+
+		for (int i = 0; i < senders.Length; i++)
+		{
+			chatUI.ReceiveChatMessage(senders[i], messages[i].ToString());
+		}
 	}
 
 	public void DebugReturn(DebugLevel level, string message)
@@ -68,23 +126,7 @@ public class ChatManager : MonoBehaviour, IChatClientListener
 	{
 	}
 
-	public void OnConnected()
-	{
-	}
-
-	public void OnChatStateChange(ChatState state)
-	{
-	}
-
-	public void OnGetMessages(string channelName, string[] senders, object[] messages)
-	{
-	}
-
 	public void OnPrivateMessage(string sender, object message, string channelName)
-	{
-	}
-
-	public void OnSubscribed(string[] channels, bool[] results)
 	{
 	}
 

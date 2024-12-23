@@ -374,8 +374,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f896698d7ed770c4185e9e2fdc12ca16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  joinUI: {fileID: 0}
-  chatUI: {fileID: 0}
+  joinUI: {fileID: 188668484}
+  chatUI: {fileID: 165855589}
 --- !u!4 &96751408
 Transform:
   m_ObjectHideFlags: 0
