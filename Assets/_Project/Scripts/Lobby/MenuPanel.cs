@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class MenuPanel : MonoBehaviour
 {
+	// 상수
+	const int MAX_PLAYER = 8;
 	public Text playerName;
 
 	public InputField nicknameInput;
@@ -68,6 +70,11 @@ public class MenuPanel : MonoBehaviour
 
 	private void RandomRoomButtonClick()
 	{
+		RoomOptions option = new RoomOptions
+		{
+			MaxPlayers = MAX_PLAYER
+		};
+		PhotonNetwork.JoinRandomOrCreateRoom(roomOptions: option);
 	}
 
 	private void LogoutButtonClick()
@@ -79,7 +86,10 @@ public class MenuPanel : MonoBehaviour
 	private void CreateButtonClick()
 	{
 		string roomName = roomNameInput.text;
-		int maxPlayer = int.Parse(playerNumInput.text);
+		if (false == int.TryParse(playerNumInput.text, out int maxPlayer))
+		{
+			maxPlayer = MAX_PLAYER;
+		}
 
 		if (string.IsNullOrEmpty(roomName))
 		{
@@ -88,12 +98,12 @@ public class MenuPanel : MonoBehaviour
 
 		if (maxPlayer <= 0)
 		{
-			maxPlayer = 8;
+			maxPlayer = MAX_PLAYER;
 		}
 
 		RoomOptions option = new RoomOptions
 		{
-			MaxPlayers = 8
+			MaxPlayers = MAX_PLAYER
 		};
 
 		// 최대 플레이어가 8명인 방 생성
