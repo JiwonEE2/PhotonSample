@@ -25,8 +25,15 @@ public class ChatUI : MonoBehaviour
 		string message = messageInput.text;
 		if (string.IsNullOrEmpty(message)) return;
 
-		// ChatManager에게 메시지 보내기 호출
-		ChatManager.Instance.SendChatMessage(message);
+		if (message.ContainsFword())
+		{
+			ReceiveChatMessage("", "<color=red>비속어가 포함되어 있습니다.</color>");
+		}
+		else
+		{
+			// ChatManager에게 메시지 보내기 호출
+			ChatManager.Instance.SendChatMessage(message);
+		}
 
 		messageInput.text = "";
 		// 엔터 누를 때마다 다시 활성화

@@ -96,7 +96,7 @@ public class ChatManager : MonoBehaviour, IChatClientListener
 		joinUI.gameObject.SetActive(false);
 		chatUI.gameObject.SetActive(true);
 		chatUI.roomNameLabel.text = channels[0];
-		print($"채팅방 접속: {channels[0]}");
+		chatUI.ReceiveChatMessage("", $"<color=green>{currentChannel} 채팅방에 입장하였습니다.</color>");
 	}
 
 	public void OnConnected()
