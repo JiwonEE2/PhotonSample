@@ -5,7 +5,7 @@ using Photon.Pun;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviourPun
+public class PlayerController : MonoBehaviourPun, IPunObservable
 {
 	private Animator anim;
 
@@ -116,5 +116,23 @@ public class PlayerController : MonoBehaviourPun
 
 		// 지연 보상 시작
 		bomb.rb.position += bomb.rb.velocity * lag;
+	}
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		// stream을 통해 주고 받는 데이터는 server에서 받는 시간 기준으로 queue 형태로 전달
+		// 데이터 자체도 queue
+
+		// 내 데이터를 server로 보냄
+		if (stream.IsWriting)
+		{
+			stream.SendNext(hp);
+			stream.SendNext(shotCount);
+		}
+		else
+		{
+			hp = (float)stream.ReceiveNext();
+			shotCount = (int)stream.ReceiveNext();
+		}
 	}
 }
