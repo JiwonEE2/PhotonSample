@@ -37,5 +37,28 @@ public class GameManager : MonoBehaviour
 		Vector3 playerPos = playerPositions.GetChild(playerNumber).position;
 		GameObject playerObj = PhotonNetwork.Instantiate("Player", playerPos, Quaternion.identity);
 		playerObj.name = $"Player {playerNumber}";
+
+		// 이 밑에서는 내가 MasterClient가 아니면 동작하지 않음
+		if (false == PhotonNetwork.IsMasterClient)
+		{
+			yield break;
+		}
+
+		// Master Client만 5초마다 Pill을 PhotonNetwork를 통해 Instantiate
+		while (true)
+		{
+			// PhotonNetwork.Instantiate를 통해 생성할 경우, position과 rotation이 반드시 필요
+			Vector3 spawnPos = Random.insideUnitSphere * 15;
+			spawnPos.y = 0;
+			Quaternion spawnRot = Quaternion.Euler(0, Random.Range(0, 180f), 0);
+
+			// 각 pill마다 random color(Color)와 random healAmount(float)를 주입하고 싶으면?
+			Vector3 color = new Vector3(Random.value, Random.value, Random.value);
+			float healAmount = Random.Range(10f, 30f);
+
+			PhotonNetwork.Instantiate("Pill", spawnPos, spawnRot, data: new object[] { color, healAmount });
+
+			yield return new WaitForSeconds(5f);
+		}
 	}
 }
