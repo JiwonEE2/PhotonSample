@@ -6,7 +6,8 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
-
+// System.Collection과의 충돌 방지
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public enum Difficulty
 {
@@ -89,6 +90,8 @@ public class RoomPanel : MonoBehaviour
 		{
 			playerEntry.readyToggle.gameObject.SetActive(false);
 		}
+
+		SortPlayer();
 	}
 
 	public void LeavePlayer(Player gonePlayer)
@@ -100,6 +103,18 @@ public class RoomPanel : MonoBehaviour
 			{
 				Destroy(child.gameObject);
 			}
+		}
+
+		SortPlayer();
+	}
+
+	// player가 들어오거나 나갈 때 방장이 제일 위에 오도록
+	private void SortPlayer()
+	{
+		foreach (Transform player in playerList)
+		{
+			Player playerInfo = player.GetComponent<PlayerEntry>().player;
+			player.SetSiblingIndex(playerInfo.ActorNumber);
 		}
 	}
 
@@ -114,7 +129,29 @@ public class RoomPanel : MonoBehaviour
 		PhotonNetwork.LoadLevel("GameScene");
 	}
 
-	private void DifficultyValueChange(int arg0)
+	private void DifficultyValueChange(int value)
 	{
+		Hashtable customProperties = PhotonNetwork.CurrentRoom.CustomProperties;
+		customProperties["Difficulty"] = value;
+		PhotonNetwork.CurrentRoom.SetCustomProperties(customProperties);
+	}
+
+	public void OnDifficultyChange(Difficulty value)
+	{
+		roomDifficulty = value;
+		difficultyText.text = value.ToString();
+	}
+
+	public void OnCharacterSelectChange(Player target, Hashtable changes)
+	{
+		foreach (Transform child in playerList)
+		{
+			PlayerEntry entry = child.GetComponent<PlayerEntry>();
+			if (entry.player == target)
+			{
+				int selection = (int)changes["CharacterSelect"];
+				entry.SetSelection(selection);
+			}
+		}
 	}
 }
